@@ -1,0 +1,71 @@
+.card {
+  min-width: 200px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.online {
+  background: var(--color-success);
+  box-shadow: 0 0 8px var(--color-success);
+}
+
+.offline {
+  background: var(--color-text-muted);
+}
+
+.id {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.value {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.failed {
+  color: var(--color-danger);
+}
+
+.task {
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+}
+
+.taskLabel {
+  color: var(--color-text-muted);
+  margin-right: 8px;
+}
+
+.taskValue {
+  color: var(--color-text-secondary);
+}

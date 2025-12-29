@@ -1,0 +1,35 @@
+:80 {
+	# Enable gzip compression
+	encode gzip
+
+	# Health check endpoint
+	handle /health {
+		respond "OK" 200
+	}
+
+	# Handle /admin prefix - strip it and serve files
+	handle /admin/* {
+		uri strip_prefix /admin
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	# Also serve from root for direct access
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	# Security headers
+	header {
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+	}
+
+	# Cache static assets
+	@static path *.js *.css *.png *.jpg *.jpeg *.gif *.ico *.svg *.woff *.woff2 *.ttf *.eot
+	header @static Cache-Control "public, max-age=31536000, immutable"
+}

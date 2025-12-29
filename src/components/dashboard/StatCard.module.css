@@ -1,0 +1,39 @@
+.card {
+  min-width: 180px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.icon {
+  font-size: 1.2rem;
+}
+
+.value {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.primary { color: var(--color-primary); }
+.success { color: var(--color-success); }
+.warning { color: var(--color-warning); }
+.danger { color: var(--color-danger); }
+.info { color: var(--color-info); }
+.secondary { color: #6b7280; }
+
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
