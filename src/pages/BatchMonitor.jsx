@@ -77,12 +77,29 @@ export default function BatchMonitor() {
       const stats = await ApiService.getBatchStats(selectedServer)
       setBatchStats(stats)
 
-      // Fetch batch status for worker info
+      // Fetch queue workers info (new system)
       try {
-        const status = await ApiService.executeBatchEndpoint(selectedServer, 'GET', '/batch/status', null)
-        setBatchStatus(status)
+        const workers = await ApiService.getWorkers(selectedServer)
+        // Convert queue workers to status format
+        const workerList = Object.values(workers || {}).map(w => ({
+          workerId: w.workerId,
+          status: w.status === 'active' ? 'STARTED' : 'STOPPED',
+          threads: w.threads,
+          processedCount: w.processedCount || w.tasksProcessed || 0,
+          failedCount: w.failedCount || w.tasksFailed || 0,
+          lastHeartbeat: w.lastHeartbeat,
+          currentTask: w.currentTask || w.currentTaskId
+        }))
+        setBatchStatus({ workers: workerList, runningCount: workerList.filter(w => w.status === 'STARTED').length })
       } catch (e) {
-        console.log('Could not fetch batch status')
+        console.log('Could not fetch queue workers:', e)
+        // Fallback to old batch status
+        try {
+          const status = await ApiService.executeBatchEndpoint(selectedServer, 'GET', '/batch/status', null)
+          setBatchStatus(status)
+        } catch (e2) {
+          console.log('Could not fetch batch status')
+        }
       }
     } catch (err) {
       console.error('Failed to fetch batch data:', err)
@@ -286,8 +303,8 @@ export default function BatchMonitor() {
             >
               <div className={styles.serverHeader}>
                 <span className={styles.serverName}>{server.name}</span>
-                <span className={`${styles.serverStatus} ${server.enabled ? styles.online : styles.offline}`}>
-                  {server.enabled ? 'Online' : 'Offline'}
+                <span className={`${styles.serverStatus} ${server.status === 'online' ? styles.online : styles.offline}`}>
+                  {server.status === 'online' ? 'Online' : 'Offline'}
                 </span>
               </div>
               <div className={styles.serverUrl}>{server.url}</div>
