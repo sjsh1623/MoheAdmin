@@ -3,11 +3,11 @@ import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Spinner from '../components/ui/Spinner'
 import StatCard from '../components/dashboard/StatCard'
-import WorkerCard from '../components/dashboard/WorkerCard'
 import ApiService from '../services/ApiService'
 import styles from './BatchMonitor.module.css'
 
-const WORKER_COUNT = 3 // Workers available (0, 1, 2)
+// Default max workers - can be overridden by server config
+const DEFAULT_MAX_WORKERS = 10
 
 const ENDPOINTS = {
   queue: [
@@ -34,8 +34,8 @@ const ENDPOINTS = {
 export default function BatchMonitor() {
   const [servers, setServers] = useState([])
   const [selectedServer, setSelectedServer] = useState('')
+  const [serverConfig, setServerConfig] = useState({ maxWorkers: DEFAULT_MAX_WORKERS })
   const [batchStats, setBatchStats] = useState(null)
-  const [workers, setWorkers] = useState({})
   const [batchStatus, setBatchStatus] = useState(null)
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(null)
@@ -43,6 +43,8 @@ export default function BatchMonitor() {
   const [inputs, setInputs] = useState({})
   const [checkboxes, setCheckboxes] = useState({ menus: true, images: true, reviews: true })
   const [selectedWorkers, setSelectedWorkers] = useState(new Set([0, 1, 2]))
+
+  const maxWorkers = serverConfig.maxWorkers || DEFAULT_MAX_WORKERS
 
   const fetchServers = async () => {
     try {
@@ -58,15 +60,22 @@ export default function BatchMonitor() {
     }
   }
 
+  const fetchServerConfig = useCallback(async () => {
+    if (!selectedServer) return
+    try {
+      const config = await ApiService.getServerConfig(selectedServer)
+      setServerConfig(config || { maxWorkers: DEFAULT_MAX_WORKERS })
+    } catch (err) {
+      console.error('Failed to fetch server config:', err)
+      setServerConfig({ maxWorkers: DEFAULT_MAX_WORKERS })
+    }
+  }, [selectedServer])
+
   const fetchData = useCallback(async () => {
     if (!selectedServer) return
     try {
-      const [stats, workersData] = await Promise.all([
-        ApiService.getBatchStats(selectedServer),
-        ApiService.getWorkers(selectedServer)
-      ])
+      const stats = await ApiService.getBatchStats(selectedServer)
       setBatchStats(stats)
-      setWorkers(workersData || {})
 
       // Fetch batch status for worker info
       try {
@@ -78,7 +87,6 @@ export default function BatchMonitor() {
     } catch (err) {
       console.error('Failed to fetch batch data:', err)
       setBatchStats(null)
-      setWorkers({})
     } finally {
       setLoading(false)
     }
@@ -92,10 +100,11 @@ export default function BatchMonitor() {
     if (selectedServer) {
       setLoading(true)
       fetchData()
+      fetchServerConfig()
       const interval = setInterval(fetchData, 5000)
       return () => clearInterval(interval)
     }
-  }, [selectedServer, fetchData])
+  }, [selectedServer, fetchData, fetchServerConfig])
 
   const handleServerSelect = (serverName) => {
     setSelectedServer(serverName)
@@ -113,7 +122,7 @@ export default function BatchMonitor() {
   }
 
   const selectAllWorkers = () => {
-    const all = new Set(Array.from({ length: WORKER_COUNT }, (_, i) => i))
+    const all = new Set(Array.from({ length: maxWorkers }, (_, i) => i))
     setSelectedWorkers(all)
   }
 
@@ -223,7 +232,7 @@ export default function BatchMonitor() {
                        category === 'update' ? '/batch/update' :
                        category === 'embedding' ? '/batch/embedding' : '/batch'
 
-      const result = await ApiService.executeBatchEndpoint(selectedServer, endpoint.method, basePath + path, body)
+      await ApiService.executeBatchEndpoint(selectedServer, endpoint.method, basePath + path, body)
 
       setMessage({
         type: 'success',
@@ -244,13 +253,18 @@ export default function BatchMonitor() {
     }
   }, [message])
 
-  const workerList = Object.values(workers)
   // batchStatus.workers is an array of {workerId, status, ...}
   const runningWorkerIds = batchStatus?.workers
     ? batchStatus.workers
         .filter(w => w.status === 'STARTED' || w.status === 'STARTING')
         .map(w => w.workerId)
     : []
+
+  // Worker detail information
+  const getWorkerDetails = (workerId) => {
+    if (!batchStatus?.workers) return null
+    return batchStatus.workers.find(w => w.workerId === workerId)
+  }
 
   return (
     <div className={styles.container}>
@@ -277,6 +291,11 @@ export default function BatchMonitor() {
                 </span>
               </div>
               <div className={styles.serverUrl}>{server.url}</div>
+              {selectedServer === server.name && serverConfig.totalWorkers && (
+                <div className={styles.serverInfo}>
+                  Workers: {serverConfig.totalWorkers} | Threads: {serverConfig.threadsPerWorker || 1}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -292,18 +311,18 @@ export default function BatchMonitor() {
           <section className={styles.section}>
             <h3 className={styles.sectionTitle}>Queue Statistics - {selectedServer}</h3>
             <div className={styles.statsGrid}>
-              <StatCard title="Pending" value={batchStats?.pendingCount || 0} icon="📋" color="warning" />
-              <StatCard title="Priority" value={batchStats?.priorityCount || 0} icon="⚡" color="info" />
-              <StatCard title="Processing" value={batchStats?.processingCount || 0} icon="🔄" color="primary" />
-              <StatCard title="Completed" value={batchStats?.completedCount || 0} icon="✅" color="success" />
-              <StatCard title="Failed" value={batchStats?.failedCount || 0} icon="❌" color="danger" />
-              <StatCard title="Active" value={batchStats?.activeWorkers || runningWorkerIds.length || 0} icon="👷" color="info" />
+              <StatCard title="Pending" value={batchStats?.pendingCount || 0} icon="P" color="warning" />
+              <StatCard title="Priority" value={batchStats?.priorityCount || 0} icon="!" color="info" />
+              <StatCard title="Processing" value={batchStats?.processingCount || 0} icon="~" color="primary" />
+              <StatCard title="Completed" value={batchStats?.completedCount || 0} icon="O" color="success" />
+              <StatCard title="Failed" value={batchStats?.failedCount || 0} icon="X" color="danger" />
+              <StatCard title="Active" value={batchStats?.activeWorkers || runningWorkerIds.length || 0} icon="W" color="info" />
             </div>
           </section>
 
-          {/* Worker Management */}
+          {/* Worker Management - Extended to 10 workers */}
           <section className={styles.section}>
-            <h3 className={styles.sectionTitle}>Worker Management</h3>
+            <h3 className={styles.sectionTitle}>Worker Management (0-{maxWorkers - 1})</h3>
             <Card>
               <div className={styles.workerManagement}>
                 <div className={styles.workerControls}>
@@ -327,25 +346,84 @@ export default function BatchMonitor() {
                   </div>
                 </div>
                 <div className={styles.workerGrid}>
-                  {Array.from({ length: WORKER_COUNT }, (_, i) => i).map((workerId) => {
+                  {Array.from({ length: maxWorkers }, (_, i) => i).map((workerId) => {
                     const isRunning = runningWorkerIds.includes(workerId)
                     const isSelected = selectedWorkers.has(workerId)
+                    const details = getWorkerDetails(workerId)
                     return (
-                      <button
-                        key={workerId}
-                        type="button"
-                        className={`${styles.workerButton} ${isSelected ? styles.selected : ''} ${isRunning ? styles.running : ''}`}
-                        onClick={() => toggleWorkerSelection(workerId)}
-                      >
-                        <span className={styles.workerId}>W{workerId}</span>
-                        {isRunning && <span className={styles.runningDot} />}
-                      </button>
+                      <div key={workerId} className={styles.workerItem}>
+                        <button
+                          type="button"
+                          className={`${styles.workerButton} ${isSelected ? styles.selected : ''} ${isRunning ? styles.running : ''}`}
+                          onClick={() => toggleWorkerSelection(workerId)}
+                        >
+                          <span className={styles.workerId}>W{workerId}</span>
+                          {isRunning && <span className={styles.runningDot} />}
+                        </button>
+                        {details && details.status !== 'NOT_STARTED' && (
+                          <div className={styles.workerMiniInfo}>
+                            {details.processedCount !== undefined && (
+                              <span className={styles.miniStat}>{details.processedCount}</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     )
                   })}
                 </div>
               </div>
             </Card>
           </section>
+
+          {/* Workers Detailed Status */}
+          {batchStatus?.workers && batchStatus.workers.length > 0 && (
+            <section className={styles.section}>
+              <h3 className={styles.sectionTitle}>Worker Status Detail ({runningWorkerIds.length} running)</h3>
+              <div className={styles.workerStatusGrid}>
+                {batchStatus.workers.map((worker) => (
+                  <div key={worker.workerId} className={`${styles.workerStatusCard} ${worker.status === 'STARTED' || worker.status === 'STARTING' ? styles.active : ''}`}>
+                    <div className={styles.workerStatusHeader}>
+                      <span className={styles.workerStatusId}>Worker {worker.workerId}</span>
+                      <span className={`${styles.workerStatusBadge} ${styles[worker.status?.toLowerCase() || 'unknown']}`}>
+                        {worker.status || 'UNKNOWN'}
+                      </span>
+                    </div>
+                    <div className={styles.workerStatusDetails}>
+                      {worker.processedCount !== undefined && (
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>Processed:</span>
+                          <span className={styles.detailValue}>{worker.processedCount}</span>
+                        </div>
+                      )}
+                      {worker.failedCount !== undefined && worker.failedCount > 0 && (
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>Failed:</span>
+                          <span className={`${styles.detailValue} ${styles.failed}`}>{worker.failedCount}</span>
+                        </div>
+                      )}
+                      {worker.progressPercent && (
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>Progress:</span>
+                          <span className={styles.detailValue}>{worker.progressPercent}%</span>
+                        </div>
+                      )}
+                      {worker.currentTask && (
+                        <div className={styles.currentTask}>
+                          <span className={styles.taskLabel}>Current:</span>
+                          <span className={styles.taskValue}>{worker.currentTask}</span>
+                        </div>
+                      )}
+                      {worker.lastHeartbeat && (
+                        <div className={styles.heartbeat}>
+                          Last: {new Date(worker.lastHeartbeat).toLocaleTimeString()}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Queue Actions */}
           <section className={styles.section}>
@@ -508,35 +586,6 @@ export default function BatchMonitor() {
               </div>
             </div>
           </section>
-
-          {/* Workers Status from Batch */}
-          {batchStatus?.workers && batchStatus.workers.length > 0 && (
-            <section className={styles.section}>
-              <h3 className={styles.sectionTitle}>Worker Status ({batchStatus.runningCount || 0} running)</h3>
-              <div className={styles.workerStatusGrid}>
-                {batchStatus.workers.map((worker) => (
-                  <div key={worker.workerId} className={`${styles.workerStatusCard} ${worker.status === 'STARTED' || worker.status === 'STARTING' ? styles.active : ''}`}>
-                    <div className={styles.workerStatusHeader}>
-                      <span className={styles.workerStatusId}>Worker {worker.workerId}</span>
-                      <span className={`${styles.workerStatusBadge} ${styles[worker.status?.toLowerCase() || 'unknown']}`}>
-                        {worker.status || 'UNKNOWN'}
-                      </span>
-                    </div>
-                    {worker.status !== 'NOT_STARTED' && (
-                      <div className={styles.workerStatusDetails}>
-                        {worker.processedCount !== undefined && (
-                          <div>Processed: {worker.processedCount}</div>
-                        )}
-                        {worker.progressPercent && (
-                          <div>Progress: {worker.progressPercent}%</div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
         </>
       )}
     </div>

@@ -82,6 +82,14 @@
   font-family: monospace;
 }
 
+.serverInfo {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
 /* Stats Grid */
 .statsGrid {
   display: grid;
@@ -493,5 +501,190 @@
 
   .workersDetailGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Worker Item with mini info */
+.workerItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.workerMiniInfo {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+.miniStat {
+  background: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Worker Status Details Enhanced */
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.85rem;
+}
+
+.detailLabel {
+  color: var(--color-text-muted);
+}
+
+.detailValue {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.detailValue.failed {
+  color: #ef4444;
+}
+
+.currentTask {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+}
+
+.taskLabel {
+  color: var(--color-text-muted);
+  margin-right: 6px;
+}
+
+.taskValue {
+  color: var(--color-primary);
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.heartbeat {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Docker Logs Viewer */
+.dockerLogsContainer {
+  padding: 16px;
+}
+
+.dockerControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.containerSelect,
+.linesSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.containerSelect {
+  min-width: 200px;
+}
+
+.linesSelect {
+  min-width: 100px;
+}
+
+.containerSelect:focus,
+.linesSelect:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.autoRefreshLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.autoRefreshLabel input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.logsViewer {
+  background: #1e1e1e;
+  border-radius: var(--radius);
+  max-height: 400px;
+  overflow: auto;
+}
+
+.logsContent {
+  margin: 0;
+  padding: 16px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #d4d4d4;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.logsLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  color: #d4d4d4;
+}
+
+/* Scrollbar for logs viewer */
+.logsViewer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.logsViewer::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+.logsViewer::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.logsViewer::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* Responsive for Docker Logs */
+@media (max-width: 768px) {
+  .dockerControls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .containerSelect,
+  .linesSelect {
+    width: 100%;
+  }
+
+  .logsViewer {
+    max-height: 300px;
   }
 }

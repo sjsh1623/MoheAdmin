@@ -2,9 +2,10 @@ import { NavLink } from 'react-router-dom'
 import styles from './Sidebar.module.css'
 
 const navItems = [
-  { path: '/monitor', label: 'Dashboard', icon: '📊', end: true },
-  { path: '/monitor/batch', label: 'Batch Monitor', icon: '⚙️' },
-  { path: '/monitor/places', label: 'Places', icon: '📍' },
+  { path: '/monitor', label: 'Dashboard', icon: 'D', end: true },
+  { path: '/monitor/batch', label: 'Batch Monitor', icon: 'B' },
+  { path: '/monitor/logs', label: 'Docker Logs', icon: 'L' },
+  { path: '/monitor/places', label: 'Places', icon: 'P' },
 ]
 
 export default function Sidebar() {

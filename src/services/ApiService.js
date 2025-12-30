@@ -77,6 +77,29 @@ export const ApiService = {
     }
     const response = await fetch(`${API_BASE}/batch/execute/${serverName}?path=${encodeURIComponent(path)}&method=${method}`, options);
     return handleResponse(response);
+  },
+
+  // Docker APIs
+  async getDockerContainers(serverName = null) {
+    const url = serverName
+      ? `${API_BASE}/docker/containers/${serverName}`
+      : `${API_BASE}/docker/containers`;
+    const response = await fetch(url);
+    return handleResponse(response);
+  },
+
+  async getDockerLogs(containerName, lines = 100, serverName = null) {
+    const url = serverName
+      ? `${API_BASE}/docker/logs/${serverName}/${containerName}?lines=${lines}`
+      : `${API_BASE}/docker/logs/${containerName}?lines=${lines}`;
+    const response = await fetch(url);
+    return handleResponse(response);
+  },
+
+  // Server config
+  async getServerConfig(serverName = 'local') {
+    const response = await fetch(`${API_BASE}/batch/config/${serverName}`);
+    return handleResponse(response);
   }
 };
 
