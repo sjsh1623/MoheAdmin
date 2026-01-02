@@ -41,6 +41,7 @@ export default function BatchMonitor() {
   const [serverConfig, setServerConfig] = useState({ maxWorkers: DEFAULT_MAX_WORKERS })
   const [batchStats, setBatchStats] = useState(null)
   const [batchStatus, setBatchStatus] = useState(null)
+  const [currentJobs, setCurrentJobs] = useState(null)
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(null)
   const [message, setMessage] = useState(null)
@@ -80,6 +81,15 @@ export default function BatchMonitor() {
     try {
       const stats = await ApiService.getBatchStats(selectedServer)
       setBatchStats(stats)
+
+      // Fetch current running jobs
+      try {
+        const jobs = await ApiService.getCurrentJobs(selectedServer)
+        setCurrentJobs(jobs)
+      } catch (e) {
+        console.log('Could not fetch current jobs:', e)
+        setCurrentJobs(null)
+      }
 
       // Fetch queue workers info (new system)
       try {
@@ -340,6 +350,81 @@ export default function BatchMonitor() {
               <StatCard title="Active" value={batchStats?.activeWorkers || runningWorkerIds.length || 0} icon="W" color="info" />
             </div>
           </section>
+
+          {/* Current Running Jobs */}
+          {currentJobs && (
+            <section className={styles.section}>
+              <h3 className={styles.sectionTitle}>
+                Current Jobs - {selectedServer}
+                <span className={styles.jobCount}>{currentJobs.activeJobCount || 0} active</span>
+              </h3>
+              {currentJobs.activeJobs && currentJobs.activeJobs.length > 0 ? (
+                <div className={styles.currentJobsGrid}>
+                  {currentJobs.activeJobs.map((job, index) => (
+                    <Card key={index} className={styles.jobCard}>
+                      <div className={styles.jobHeader}>
+                        <span className={`${styles.jobType} ${styles[job.type?.toLowerCase() || 'unknown']}`}>
+                          {job.type}
+                        </span>
+                        <span className={`${styles.jobStatus} ${styles[job.status?.toLowerCase() || 'unknown']}`}>
+                          {job.status}
+                        </span>
+                      </div>
+                      <div className={styles.jobDescription}>{job.description}</div>
+                      <div className={styles.jobDetails}>
+                        {job.workerId && (
+                          <div className={styles.jobDetail}>
+                            <span className={styles.jobLabel}>Worker:</span>
+                            <span className={styles.jobValue}>{job.workerId}</span>
+                          </div>
+                        )}
+                        {job.taskId && (
+                          <div className={styles.jobDetail}>
+                            <span className={styles.jobLabel}>Task:</span>
+                            <span className={styles.jobValue}>{job.taskId.substring(0, 8)}...</span>
+                          </div>
+                        )}
+                        {job.jobExecutionId && (
+                          <div className={styles.jobDetail}>
+                            <span className={styles.jobLabel}>Job ID:</span>
+                            <span className={styles.jobValue}>{job.jobExecutionId}</span>
+                          </div>
+                        )}
+                        {job.processedCount !== undefined && (
+                          <div className={styles.jobDetail}>
+                            <span className={styles.jobLabel}>Processed:</span>
+                            <span className={styles.jobValue}>{job.processedCount}</span>
+                          </div>
+                        )}
+                        {job.readCount !== undefined && (
+                          <div className={styles.jobDetail}>
+                            <span className={styles.jobLabel}>Read:</span>
+                            <span className={styles.jobValue}>{job.readCount}</span>
+                          </div>
+                        )}
+                        {job.writeCount !== undefined && (
+                          <div className={styles.jobDetail}>
+                            <span className={styles.jobLabel}>Write:</span>
+                            <span className={styles.jobValue}>{job.writeCount}</span>
+                          </div>
+                        )}
+                        {job.failedCount > 0 && (
+                          <div className={styles.jobDetail}>
+                            <span className={styles.jobLabel}>Failed:</span>
+                            <span className={`${styles.jobValue} ${styles.failed}`}>{job.failedCount}</span>
+                          </div>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <div className={styles.noJobs}>No active jobs on this server</div>
+                </Card>
+              )}
+            </section>
+          )}
 
           {/* Worker Management - Extended to 10 workers */}
           <section className={styles.section}>

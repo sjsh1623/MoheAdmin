@@ -100,6 +100,12 @@ export const ApiService = {
   async getServerConfig(serverName = 'local') {
     const response = await fetch(`${API_BASE}/batch/config/${serverName}`);
     return handleResponse(response);
+  },
+
+  // Current running jobs
+  async getCurrentJobs(serverName = 'local') {
+    const response = await fetch(`${API_BASE}/batch/current-jobs/${serverName}`);
+    return handleResponse(response);
   }
 };
 
