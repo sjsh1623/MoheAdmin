@@ -26,8 +26,12 @@ const ENDPOINTS = {
     { id: 'update-start-all', method: 'POST', path: '/start-all', name: 'Start All Updates' },
   ],
   embedding: [
-    { id: 'embedding-start', method: 'POST', path: '/start', name: 'Start Embedding' },
-    { id: 'embedding-stop', method: 'POST', path: '/stop', name: 'Stop Embedding' },
+    { id: 'embedding-keyword-start', method: 'POST', path: '/keyword/start', name: 'Start Keyword', color: 'success' },
+    { id: 'embedding-keyword-stop', method: 'POST', path: '/keyword/stop', name: 'Stop Keyword', color: 'danger' },
+    { id: 'embedding-menu-start', method: 'POST', path: '/menu/start', name: 'Start Menu', color: 'success' },
+    { id: 'embedding-menu-stop', method: 'POST', path: '/menu/stop', name: 'Stop Menu', color: 'danger' },
+    { id: 'embedding-all-start', method: 'POST', path: '/all/start', name: 'Start All (Keyword + Menu)', color: 'primary' },
+    { id: 'embedding-all-stop', method: 'POST', path: '/all/stop', name: 'Stop All', color: 'danger' },
   ],
 }
 
@@ -588,7 +592,7 @@ export default function BatchMonitor() {
                     {ENDPOINTS.embedding.map((endpoint) => (
                       <Button
                         key={endpoint.id}
-                        variant={endpoint.id.includes('stop') ? 'danger' : 'success'}
+                        variant={endpoint.color || (endpoint.id.includes('stop') ? 'danger' : 'success')}
                         size="small"
                         onClick={() => executeEndpoint('embedding', endpoint)}
                         loading={actionLoading === `embedding-${endpoint.id}`}
