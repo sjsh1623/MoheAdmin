@@ -820,3 +820,22 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Description Generation Section */
+.descriptionInfo {
+  padding: 16px 16px 8px 16px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 8px;
+}
+
+.descriptionText {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.descriptionSubtext {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}

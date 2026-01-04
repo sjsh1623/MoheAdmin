@@ -33,6 +33,9 @@ const ENDPOINTS = {
     { id: 'embedding-all-start', method: 'POST', path: '/all/start', name: 'Start All (Keyword + Menu)', color: 'primary' },
     { id: 'embedding-all-stop', method: 'POST', path: '/all/stop', name: 'Stop All', color: 'danger' },
   ],
+  description: [
+    { id: 'description-start', method: 'POST', path: '/start', name: 'Start Description Generation', color: 'success' },
+  ],
 }
 
 export default function BatchMonitor() {
@@ -48,6 +51,7 @@ export default function BatchMonitor() {
   const [inputs, setInputs] = useState({})
   const [checkboxes, setCheckboxes] = useState({ menus: true, images: true, reviews: true })
   const [selectedWorkers, setSelectedWorkers] = useState(new Set([0, 1, 2]))
+  const [descriptionCount, setDescriptionCount] = useState(null)
 
   const maxWorkers = serverConfig.maxWorkers || DEFAULT_MAX_WORKERS
 
@@ -114,6 +118,15 @@ export default function BatchMonitor() {
         } catch (e2) {
           console.log('Could not fetch batch status')
         }
+      }
+
+      // Fetch description generation target count
+      try {
+        const descResult = await ApiService.executeBatchEndpoint(selectedServer, 'GET', '/batch/description/count', null)
+        setDescriptionCount(descResult?.targetCount || 0)
+      } catch (e) {
+        console.log('Could not fetch description count:', e)
+        setDescriptionCount(null)
       }
     } catch (err) {
       console.error('Failed to fetch batch data:', err)
@@ -261,7 +274,8 @@ export default function BatchMonitor() {
 
       const basePath = category === 'queue' ? '/batch/queue' :
                        category === 'update' ? '/batch/update' :
-                       category === 'embedding' ? '/batch/embedding' : '/batch'
+                       category === 'embedding' ? '/batch/embedding' :
+                       category === 'description' ? '/batch/description' : '/batch'
 
       await ApiService.executeBatchEndpoint(selectedServer, endpoint.method, basePath + path, body)
 
@@ -643,6 +657,41 @@ export default function BatchMonitor() {
                     </Button>
                   </div>
                 </div>
+              </div>
+            </Card>
+          </section>
+
+          {/* Description Generation */}
+          <section className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              AI Description Generation
+              {descriptionCount !== null && (
+                <span className={styles.jobCount}>{descriptionCount} pending</span>
+              )}
+            </h3>
+            <Card>
+              <div className={styles.descriptionInfo}>
+                <p className={styles.descriptionText}>
+                  리뷰 데이터를 기반으로 OpenAI가 mohe_description을 생성합니다.
+                </p>
+                <p className={styles.descriptionSubtext}>
+                  대상: 크롤링 완료 + mohe_description 없음 + 리뷰 있음
+                </p>
+              </div>
+              <div className={styles.buttonList}>
+                {ENDPOINTS.description.map((endpoint) => (
+                  <Button
+                    key={endpoint.id}
+                    variant={endpoint.color || 'success'}
+                    size="small"
+                    onClick={() => executeEndpoint('description', endpoint)}
+                    loading={actionLoading === `description-${endpoint.id}`}
+                    disabled={actionLoading !== null || descriptionCount === 0}
+                    fullWidth
+                  >
+                    {endpoint.name} {descriptionCount !== null && `(${descriptionCount})`}
+                  </Button>
+                ))}
               </div>
             </Card>
           </section>
