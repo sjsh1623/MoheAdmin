@@ -24,6 +24,7 @@ const ENDPOINTS = {
     { id: 'update-reviews', method: 'POST', path: '/reviews', name: 'Update Reviews' },
     { id: 'update-menus-images', method: 'POST', path: '/menus-with-images', name: 'Menus + Images' },
     { id: 'update-start-all', method: 'POST', path: '/start-all', name: 'Start All Updates' },
+    { id: 'update-with-description', method: 'POST', path: '/with-description', name: 'Update + Description', color: 'warning' },
   ],
   embedding: [
     { id: 'embedding-keyword-start', method: 'POST', path: '/keyword/start', name: 'Start Keyword', color: 'success' },
