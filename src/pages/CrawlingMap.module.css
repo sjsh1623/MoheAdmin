@@ -1,0 +1,372 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+}
+
+.error {
+  color: var(--color-danger);
+}
+
+/* ── Header ── */
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.autoRefreshLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.refreshBtn {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-card);
+  color: var(--color-text);
+  transition: background 0.15s;
+}
+
+.refreshBtn:hover {
+  background: var(--color-bg);
+}
+
+.startBtn {
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.startBtn:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.startBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lastUpdated {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Summary stat cards ── */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.statCard {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.statValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.statLabel {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
+
+/* ── Overall progress ── */
+.progressSection {
+  margin-bottom: 24px;
+}
+
+.progressLabel {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #10b981;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+/* ── Body layout ── */
+.body {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* ── Map section ── */
+.mapSection {
+  flex: 1;
+  min-width: 0;
+}
+
+.sectionTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+/* 7×7 grid representing Korea map */
+.mapGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 72px);
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.sidoCell {
+  border: 2px solid;
+  border-radius: var(--radius);
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: transform 0.1s, box-shadow 0.1s;
+  user-select: none;
+}
+
+.sidoCell:hover {
+  transform: scale(1.04);
+  box-shadow: var(--shadow-md);
+}
+
+.sidoCell.selected {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  transform: scale(1.04);
+}
+
+.sidoName {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.sidoStatus {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.sidoProgress {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Detail panel ── */
+.detailPanel {
+  width: 300px;
+  flex-shrink: 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detailHeader h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.closeBtn {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  padding: 2px 6px;
+  border-radius: var(--radius);
+  transition: background 0.1s;
+}
+
+.closeBtn:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.detailList {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-border);
+  gap: 8px;
+}
+
+.detailItem:last-child {
+  border-bottom: none;
+}
+
+.detailLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.detailDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.detailName {
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.detailRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.detailStatusLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.detailCount {
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+}
+
+.detailDate {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+}
+
+.empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .body {
+    flex-direction: column;
+  }
+
+  .detailPanel {
+    width: 100%;
+  }
+
+  .mapGrid {
+    grid-template-rows: repeat(7, 60px);
+  }
+}
+
+@media (max-width: 600px) {
+  .summaryGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .mapGrid {
+    grid-template-rows: repeat(7, 50px);
+    gap: 4px;
+  }
+
+  .sidoName {
+    font-size: 0.72rem;
+  }
+
+  .sidoStatus {
+    font-size: 0.6rem;
+  }
+
+  .sidoProgress {
+    display: none;
+  }
+}

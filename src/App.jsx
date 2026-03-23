@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import BatchMonitor from './pages/BatchMonitor'
 import DockerLogs from './pages/DockerLogs'
 import Places from './pages/Places'
+import CrawlingMap from './pages/CrawlingMap'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="batch" element={<BatchMonitor />} />
         <Route path="logs" element={<DockerLogs />} />
         <Route path="places" element={<Places />} />
+        <Route path="crawling" element={<CrawlingMap />} />
       </Route>
       <Route path="/" element={<Navigate to="/monitor" replace />} />
       <Route path="*" element={<Navigate to="/monitor" replace />} />

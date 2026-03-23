@@ -6,6 +6,7 @@ const navItems = [
   { path: '/monitor/batch', label: 'Batch Monitor', icon: 'B' },
   { path: '/monitor/logs', label: 'Docker Logs', icon: 'L' },
   { path: '/monitor/places', label: 'Places', icon: 'P' },
+  { path: '/monitor/crawling', label: '크롤링 지도', icon: 'C' },
 ]
 
 export default function Sidebar() {
