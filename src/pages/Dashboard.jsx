@@ -8,6 +8,7 @@ import styles from './Dashboard.module.css'
 export default function Dashboard() {
   const [stats, setStats] = useState(null)
   const [activity, setActivity] = useState([])
+  const [recentCrawls, setRecentCrawls] = useState([])
   const [kakaoQueue, setKakaoQueue] = useState(null)
   const [loading, setLoading] = useState(true)
   const [triggeringJob, setTriggeringJob] = useState(null)
@@ -15,12 +16,14 @@ export default function Dashboard() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [pipelineStats, recentActivity] = await Promise.all([
+      const [pipelineStats, recentActivity, crawls] = await Promise.all([
         ApiService.getPipelineStats(),
-        ApiService.getRecentActivity()
+        ApiService.getRecentActivity(),
+        ApiService.getRecentCrawls(10, 30)
       ])
       setStats(pipelineStats)
       setActivity(recentActivity)
+      setRecentCrawls(crawls || [])
       setLastUpdated(new Date())
 
       try {
@@ -211,6 +214,52 @@ export default function Dashboard() {
           </Button>
         </div>
       </Card>
+
+      {/* Recent Crawls */}
+      {recentCrawls.length > 0 && (
+        <>
+          <h3 className={styles.sectionTitle}>
+            최근 크롤링 장소
+            <span className={styles.todayCount}>{recentCrawls.length}개 (10분 내)</span>
+          </h3>
+          <Card className={styles.crawlTableCard}>
+            <div className={styles.crawlTable}>
+              <div className={styles.crawlHeader}>
+                <span>장소명</span>
+                <span>위치</span>
+                <span>상태</span>
+                <span>리뷰</span>
+                <span>키워드</span>
+                <span>시간</span>
+              </div>
+              {recentCrawls.map((place) => {
+                const time = place.updatedAt ? new Date(place.updatedAt).toLocaleTimeString() : ''
+                const ago = place.updatedAt
+                  ? Math.round((Date.now() - new Date(place.updatedAt).getTime()) / 60000)
+                  : null
+                return (
+                  <div key={place.id} className={styles.crawlRow}>
+                    <span className={styles.crawlName} title={place.name}>
+                      {place.name}
+                    </span>
+                    <span className={styles.crawlAddr} title={place.roadAddress}>
+                      {place.roadAddress || `${place.latitude?.toFixed(4)}, ${place.longitude?.toFixed(4)}`}
+                    </span>
+                    <span className={place.crawlStatus === 'COMPLETED' ? styles.statusOk : styles.statusFail}>
+                      {place.crawlStatus === 'COMPLETED' ? '✅' : '❌'}
+                    </span>
+                    <span>{place.reviewCount || 0}</span>
+                    <span>{place.keywordCount || 0}</span>
+                    <span className={styles.crawlTime}>
+                      {ago !== null ? (ago < 1 ? '방금' : `${ago}분 전`) : time}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </Card>
+        </>
+      )}
 
       {/* Recent Activity Chart */}
       {activity.length > 0 && (

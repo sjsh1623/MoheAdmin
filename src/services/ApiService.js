@@ -108,6 +108,12 @@ export const ApiService = {
     return handleResponse(response);
   },
 
+  // Recent crawls
+  async getRecentCrawls(minutes = 5, limit = 50) {
+    const response = await fetch(`${API_BASE}/pipeline/recent-crawls?minutes=${minutes}&limit=${limit}`);
+    return handleResponse(response);
+  },
+
   // Pipeline stats
   async getPipelineStats() {
     const response = await fetch(`${API_BASE}/pipeline/stats`);
