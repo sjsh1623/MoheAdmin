@@ -106,6 +106,33 @@ export const ApiService = {
   async getCurrentJobs(serverName = 'local') {
     const response = await fetch(`${API_BASE}/batch/current-jobs/${serverName}`);
     return handleResponse(response);
+  },
+
+  // Pipeline stats
+  async getPipelineStats() {
+    const response = await fetch(`${API_BASE}/pipeline/stats`);
+    return handleResponse(response);
+  },
+
+  async getRecentActivity() {
+    const response = await fetch(`${API_BASE}/pipeline/recent-activity`);
+    return handleResponse(response);
+  },
+
+  async triggerJob(jobName) {
+    const response = await fetch(`${API_BASE}/pipeline/jobs/${jobName}/trigger`, { method: 'POST' });
+    return handleResponse(response);
+  },
+
+  // Crawling map
+  async getCrawlingMap() {
+    const response = await fetch(`${API_BASE}/crawling/map`);
+    return handleResponse(response);
+  },
+
+  async startQueueCrawling() {
+    const response = await fetch(`${API_BASE}/crawling/start-queue`, { method: 'POST' });
+    return handleResponse(response);
   }
 };
 
