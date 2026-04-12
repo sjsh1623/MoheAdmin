@@ -5,12 +5,16 @@ import BatchMonitor from './pages/BatchMonitor'
 import DockerLogs from './pages/DockerLogs'
 import Places from './pages/Places'
 import CrawlingMap from './pages/CrawlingMap'
+import Pipeline from './pages/Pipeline'
+import Analytics from './pages/Analytics'
 
 function App() {
   return (
     <Routes>
       <Route path="/monitor" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
+        <Route path="pipeline" element={<Pipeline />} />
+        <Route path="analytics" element={<Analytics />} />
         <Route path="batch" element={<BatchMonitor />} />
         <Route path="logs" element={<DockerLogs />} />
         <Route path="places" element={<Places />} />

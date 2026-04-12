@@ -75,12 +75,41 @@
   background: var(--color-bg);
 }
 
+.selectedRow {
+  background: rgba(74, 144, 217, 0.06);
+}
+
+.checkboxCol {
+  width: 40px;
+  text-align: center;
+}
+
+.checkboxCol input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
 .name {
   font-weight: 500;
   max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.nameClickable {
+  font-weight: 500;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  color: var(--color-primary);
+}
+
+.nameClickable:hover {
+  text-decoration: underline;
 }
 
 .address {
@@ -125,13 +154,34 @@
 }
 
 .pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
 .failed {
   background: #fee2e2;
   color: #991b1b;
+}
+
+.notFound {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.deleteIconBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.deleteIconBtn:hover {
+  color: #E74C3C;
+  background: #fee2e2;
 }
 
 .pagination {
@@ -160,6 +210,163 @@
   color: var(--color-text-muted);
 }
 
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: var(--shadow-md);
+}
+
+.modal h3 {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  color: var(--color-text);
+}
+
+.modal p {
+  margin-bottom: 24px;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Detail Modal */
+.detailModal {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  max-width: 640px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-md);
+}
+
+.detailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-card);
+  z-index: 1;
+}
+
+.detailHeader h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--color-text);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.closeBtn:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.detailBody {
+  padding: 20px 24px;
+}
+
+.detailRow {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.detailLabel {
+  min-width: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.detailValue {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.detailSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.detailText {
+  font-size: 0.88rem;
+  color: var(--color-text);
+  line-height: 1.6;
+  margin-top: 8px;
+}
+
+.keywordList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.keyword {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.detailImage {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: var(--color-bg);
+}
+
 @media (max-width: 768px) {
   .searchForm {
     flex-direction: column;
@@ -177,6 +384,7 @@
   }
 
   .name,
+  .nameClickable,
   .address,
   .category {
     max-width: 120px;

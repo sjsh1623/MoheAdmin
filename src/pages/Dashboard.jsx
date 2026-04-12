@@ -14,16 +14,20 @@ export default function Dashboard() {
   const [triggeringJob, setTriggeringJob] = useState(null)
   const [lastUpdated, setLastUpdated] = useState(null)
 
+  const [analytics, setAnalytics] = useState(null)
+
   const fetchData = useCallback(async () => {
     try {
-      const [pipelineStats, recentActivity, crawls] = await Promise.all([
+      const [pipelineStats, recentActivity, crawls, analyticsSummary] = await Promise.all([
         ApiService.getPipelineStats(),
         ApiService.getRecentActivity(),
-        ApiService.getRecentCrawls(10, 30)
+        ApiService.getRecentCrawls(10, 30),
+        ApiService.getAnalyticsSummary().catch(() => null)
       ])
       setStats(pipelineStats)
       setActivity(recentActivity)
       setRecentCrawls(crawls || [])
+      setAnalytics(analyticsSummary)
       setLastUpdated(new Date())
 
       try {
@@ -76,6 +80,47 @@ export default function Dashboard() {
         <span className={styles.updated}>
           {lastUpdated && `Updated ${lastUpdated.toLocaleTimeString()}`}
         </span>
+      </div>
+
+      {/* Today's Stats */}
+      <div className={styles.todayStats}>
+        <div className={styles.todayStat}>
+          <span className={styles.todayStatLabel}>오늘 방문자</span>
+          <span className={styles.todayStatValue}>
+            {analytics?.todayVisitors?.toLocaleString() ?? '-'}
+          </span>
+        </div>
+        <div className={styles.todayStat}>
+          <span className={styles.todayStatLabel}>페이지뷰</span>
+          <span className={styles.todayStatValue}>
+            {analytics?.todayPageviews?.toLocaleString() ?? '-'}
+          </span>
+        </div>
+        <div className={styles.todayStat}>
+          <span className={styles.todayStatLabel}>신규 장소</span>
+          <span className={styles.todayStatValue}>
+            {stats?.newPlacesToday?.toLocaleString() ?? '-'}
+          </span>
+        </div>
+      </div>
+
+      {/* Pipeline Mini Progress */}
+      <div className={styles.miniProgressRow}>
+        <MiniProgress
+          label="Description"
+          done={content.aiDescriptions}
+          total={places.total}
+        />
+        <MiniProgress
+          label="Embedding"
+          done={embedding.embeddedPlaces}
+          total={places.total}
+        />
+        <MiniProgress
+          label="Image"
+          done={content.images}
+          total={places.total}
+        />
       </div>
 
       {/* Pipeline Flow */}
@@ -314,5 +359,20 @@ function JobBadge({ status }) {
     <span className={isRunning ? styles.badgeRunning : styles.badgeIdle}>
       {isRunning ? '● RUNNING' : '○ IDLE'}
     </span>
+  )
+}
+
+function MiniProgress({ label, done, total }) {
+  const pct = total > 0 ? ((done / total) * 100).toFixed(1) : 0
+  return (
+    <div className={styles.miniProgress}>
+      <div className={styles.miniProgressHeader}>
+        <span className={styles.miniProgressLabel}>{label}</span>
+        <span className={styles.miniProgressPct}>{pct}%</span>
+      </div>
+      <div className={styles.miniProgressBar}>
+        <div className={styles.miniProgressFill} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
   )
 }

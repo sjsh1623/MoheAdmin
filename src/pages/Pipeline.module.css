@@ -1,0 +1,185 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.headerRow h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-text);
+}
+
+.updated {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 24px 0 12px 0;
+}
+
+/* Progress Grid */
+.progressGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.progressCard {
+  padding: 20px;
+  text-align: center;
+}
+
+.progressLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.progressBarOuter {
+  width: 100%;
+  height: 16px;
+  background: var(--color-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progressBarInner {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.5s ease;
+  min-width: 0;
+}
+
+.progressStats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.progressPct {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* Jobs */
+.jobsCard {
+  padding: 16px;
+}
+
+.noJobs {
+  text-align: center;
+  padding: 20px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.jobList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.jobItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  border-radius: var(--radius);
+}
+
+.jobDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.jobName {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.jobStatus {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.jobRow {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.jobRow:last-child {
+  border-bottom: none;
+}
+
+.jobInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.jobNameFull {
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--color-text);
+}
+
+.badgeRunning {
+  font-size: 0.75rem;
+  color: var(--color-success);
+  font-weight: 600;
+  padding: 2px 8px;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 10px;
+}
+
+.badgeIdle {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  padding: 2px 8px;
+  background: var(--color-bg);
+  border-radius: 10px;
+}
+
+/* Controls */
+.controlsCard {
+  padding: 20px;
+}
+
+.controlButtons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}

@@ -139,6 +139,69 @@ export const ApiService = {
   async startQueueCrawling() {
     const response = await fetch(`${API_BASE}/crawling/start-queue`, { method: 'POST' });
     return handleResponse(response);
+  },
+
+  // Analytics
+  async getAnalyticsSummary() {
+    const response = await fetch('/api/admin/analytics/summary');
+    return handleResponse(response);
+  },
+
+  async getAnalyticsHourly() {
+    const response = await fetch('/api/admin/analytics/hourly');
+    return handleResponse(response);
+  },
+
+  async getAnalyticsDevices() {
+    const response = await fetch('/api/admin/analytics/devices');
+    return handleResponse(response);
+  },
+
+  async getAnalyticsBrowsers() {
+    const response = await fetch('/api/admin/analytics/browsers');
+    return handleResponse(response);
+  },
+
+  async getAnalyticsOs() {
+    const response = await fetch('/api/admin/analytics/os');
+    return handleResponse(response);
+  },
+
+  async getAnalyticsPages(limit = 20) {
+    const response = await fetch(`/api/admin/analytics/pages?limit=${limit}`);
+    return handleResponse(response);
+  },
+
+  async getAnalyticsVisitors(page = 0, size = 20) {
+    const response = await fetch(`/api/admin/analytics/visitors?page=${page}&size=${size}`);
+    return handleResponse(response);
+  },
+
+  // Place Management
+  async deletePlace(id) {
+    const response = await fetch(`${API_BASE}/places/${id}`, { method: 'DELETE' });
+    return handleResponse(response);
+  },
+
+  async deletePlacesBatch(placeIds) {
+    const response = await fetch(`${API_BASE}/places/batch-delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ placeIds }),
+    });
+    return handleResponse(response);
+  },
+
+  // Pipeline Progress
+  async getPipelineProgress() {
+    const response = await fetch(`${API_BASE}/pipeline/progress`);
+    return handleResponse(response);
+  },
+
+  // Stop all jobs
+  async stopAllJobs() {
+    const response = await fetch(`${API_BASE}/pipeline/jobs/stop-all`, { method: 'POST' });
+    return handleResponse(response);
   }
 };
 
